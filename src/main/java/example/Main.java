@@ -19,73 +19,59 @@
 package example;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.avro.ipc.SocketServer;
-import org.apache.avro.ipc.SocketTransceiver;
+import example.client.AbstractClient;
+import example.server.IServer;
 import org.apache.avro.ipc.specific.SpecificRequestor;
-import org.apache.avro.ipc.specific.SpecificResponder;
 import org.apache.avro.util.Utf8;
 
 import example.proto.Mail;
 import example.proto.Message;
-import org.apache.avro.ipc.NettyServer;
-import org.apache.avro.ipc.NettyTransceiver;
-import org.apache.avro.ipc.Server;
-import org.apache.avro.ipc.specific.SpecificRequestor;
-import org.apache.avro.ipc.specific.SpecificResponder;
-import org.apache.avro.util.Utf8;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
 
 /**
  * Start a server, attach a client, and send a message.
  */
 public class Main {
-    public static class MailImpl implements Mail {
-        // in this simple example just return details of the message
-        public Utf8 send(Message message) {
-            System.out.println("Sending message");
-            return new Utf8("Sending message to " + message.getTo().toString()
-                    + " from " + message.getFrom().toString()
-                    + " with body " + message.getBody().toString());
-        }
-    }
 
-    private static Server server;
-
-    private static void startServer() throws IOException {
-        server = new NettyServer(new SpecificResponder(Mail.class, new MailImpl()), new InetSocketAddress(65111));
-        // the server implements the Mail protocol (MailImpl)
-    }
+    public static int MESSAGE_NUMBER_TO_SEND = 1000;
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 3) {
-            System.out.println("Usage: <to> <from> <body>");
-            System.exit(1);
+
+        String[] implementations = {"netty", "http", "json"};
+        List<String> results = new ArrayList<String>();
+
+        for (String implementation:implementations) {
+            System.out.println("Starting test of " + implementation);
+            IServer server;
+            AbstractClient client;
+            int port = TransportAdapterFactory.DEFAULT_PORT;
+
+            server = TransportAdapterFactory.createServer(implementation, port);
+
+            client =  TransportAdapterFactory.createClient(implementation, port);
+
+            for (int size = 32; size <= 16384; size *= 2)  {
+                Object message = MessageFactory.createMessage(implementation, size);
+
+                long startTime = System.nanoTime();
+                for (int i = 0; i < MESSAGE_NUMBER_TO_SEND; i++) {
+                    client.send(message);
+                }
+                long elapsedTime = System.nanoTime() - startTime;
+                String result = String.format("%s,%s,%s,%s,%s", size, implementation, MESSAGE_NUMBER_TO_SEND, elapsedTime, 1);
+                results.add(result);
+            }
+
+            client.close();
+            server.close();
+            port++;
+            System.out.println("Test of " + implementation +  " ended");
         }
 
-        System.out.println("Starting server");
-        // usually this would be another app, but for simplicity
-        startServer();
-        System.out.println("Server started");
+        for (String result: results)
+            System.out.println(result);
 
-        NettyTransceiver client = new NettyTransceiver(new InetSocketAddress(65111));
-        // client code - attach to the server and send a message
-        Mail proxy = (Mail) SpecificRequestor.getClient(Mail.class, client);
-        System.out.println("Client built, got proxy");
-
-        // fill in the Message record and send it
-        Message message = new Message();
-        message.setTo(new Utf8(args[0]));
-        message.setFrom(new Utf8(args[1]));
-        message.setBody(new Utf8(args[2]));
-        System.out.println("Calling proxy.send with message:  " + message.toString());
-        System.out.println("Result: " + proxy.send(message));
-
-        // cleanup
-        client.close();
-        server.close();
     }
 }
