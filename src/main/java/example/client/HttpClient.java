@@ -11,10 +11,14 @@ import java.net.URL;
 public class HttpClient extends AvroClient {
 
     public HttpClient(int port) {
-        super(port);
+        this(DEFAULT_ADDRESS, port);
+    }
+
+    public HttpClient(String address, int port) {
+        super(address, port);
 
         try {
-            HttpTransceiver delegate = new HttpTransceiver(new URL(String.format("http://127.0.0.1:%s", port)));
+            HttpTransceiver delegate = new HttpTransceiver(new URL(String.format("http://%s:%s",address, port)));
             setDelegate(delegate);
         } catch (MalformedURLException e) {
             e.printStackTrace();

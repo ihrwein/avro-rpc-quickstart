@@ -1,4 +1,4 @@
-package example;
+package example.message;
 
 import example.proto.Message;
 import org.apache.avro.util.Utf8;

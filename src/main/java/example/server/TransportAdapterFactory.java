@@ -1,4 +1,4 @@
-package example;
+package example.server;
 
 import example.client.AbstractClient;
 import example.client.HttpClient;
@@ -9,16 +9,11 @@ import example.server.IServer;
 import example.server.NettyServer;
 import example.server.json.JsonServer;
 import example.server.json.JsonServerAdapter;
+import example.util.Defaults;
 
 import java.io.IOException;
 
 public class TransportAdapterFactory {
-
-    public static final int DEFAULT_PORT = 65111;
-
-    public static IServer createServer(String implementation) throws IOException {
-        return createServer(implementation, DEFAULT_PORT);
-    }
 
     public static IServer createServer(String implementation, int port) throws IOException {
         if ("netty".equals(implementation)) {
@@ -39,18 +34,18 @@ public class TransportAdapterFactory {
     }
 
     public static AbstractClient createClient(String implementation) throws IOException {
-        return createClient(implementation, DEFAULT_PORT);
+        return createClient(implementation, Defaults.ADDRESS, Defaults.PORT);
     }
 
-    public static AbstractClient createClient(String implementation, int port) throws IOException {
+    public static AbstractClient createClient(String implementation, String address, int port) throws IOException {
         if ("netty".equals(implementation)) {
-            return new NettyClient(port);
+            return new NettyClient(address, port);
         }
         else if ("http".equals(implementation)) {
-            return new HttpClient(port);
+            return new HttpClient(address, port);
         }
         else if ("json".equals(implementation)) {
-            return new JsonClient(port);
+            return new JsonClient(address, port);
         }
 
         return null;

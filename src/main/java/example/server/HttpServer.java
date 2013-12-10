@@ -1,6 +1,6 @@
 package example.server;
 
-import example.MailImpl;
+import example.message.MailImpl;
 import example.proto.Mail;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
@@ -12,12 +12,11 @@ public class HttpServer implements IServer {
 
     public HttpServer(int port) {
         try {
-            delegate = new org.apache.avro.ipc.HttpServer(new SpecificResponder(Mail.class, new MailImpl()), port);
+            delegate = new org.apache.avro.ipc.HttpServer(new SpecificResponder(Mail.class, new MailImpl()), DEFAULT_ADDRESS, port);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public int getPort() {

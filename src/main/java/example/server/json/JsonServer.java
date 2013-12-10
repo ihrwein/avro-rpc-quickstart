@@ -1,6 +1,7 @@
 package example.server.json;
 
 import example.server.IServer;
+import example.util.Defaults;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,14 +36,18 @@ public class JsonServer implements Runnable {
         }
     }
 
-    @Override
     public void run() {
         Socket clientSocket = null;
         try {
-            clientSocket = serverSocket.accept();
-            ClientHandler ch = new ClientHandler(clientSocket);
-            Thread t = new Thread(ch);
-            t.start();
+            int clientNumber = 0;
+            while (true && !serverSocket.isClosed()) {
+                clientSocket = serverSocket.accept();
+                System.out.println("New client: #" + clientNumber);
+                clientNumber++;
+                ClientHandler ch = new ClientHandler(clientSocket);
+                Thread t = new Thread(ch);
+                t.start();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

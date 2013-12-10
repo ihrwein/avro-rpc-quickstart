@@ -1,14 +1,11 @@
-package example;
-
-import com.google.gson.Gson;
+package example.message;
 
 public class JsonMessage {
 
-    String to;
-    String from;
-    String body;
-    StringBuilder builder;
-    String repr;
+    private String to;
+    private String from;
+    private String body;
+    private String repr;
 
     public JsonMessage(String to, String from, String body) {
         this.to = to;

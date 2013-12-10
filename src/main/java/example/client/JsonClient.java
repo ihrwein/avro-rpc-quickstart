@@ -10,16 +10,12 @@ public class JsonClient extends AbstractClient {
     private Socket clientSocket;
     private DataOutputStream os;
 
-    public JsonClient() {
-        this(DEFAULT_PORT);
-    }
-
-    public JsonClient(int port) {
-        super(port);
+    public JsonClient(String address, int port) {
+        super(address, port);
 
         clientSocket = new Socket();
         try {
-            clientSocket.connect(new InetSocketAddress(port));
+            clientSocket.connect(new InetSocketAddress(address, port));
             os = new DataOutputStream(clientSocket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();

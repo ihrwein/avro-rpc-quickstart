@@ -18,60 +18,28 @@
 
 package example;
 
+import example.util.CommandLineOptions;
+import example.util.TesterMode;
+import example.util.Utils;
+import example.tester.TestExecutor;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import example.client.AbstractClient;
-import example.server.IServer;
-import org.apache.avro.ipc.specific.SpecificRequestor;
-import org.apache.avro.util.Utf8;
-
-import example.proto.Mail;
-import example.proto.Message;
-
-/**
- * Start a server, attach a client, and send a message.
- */
 public class Main {
 
-    public static int MESSAGE_NUMBER_TO_SEND = 1000;
+    public static final String[] IMPLEMENTATIONS = {"netty", "http", "json"};
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
-        String[] implementations = {"netty", "http", "json"};
-        List<String> results = new ArrayList<String>();
+        CommandLineOptions options = Utils.parseCommandLineOptions(args);
 
-        for (String implementation:implementations) {
-            System.out.println("Starting test of " + implementation);
-            IServer server;
-            AbstractClient client;
-            int port = TransportAdapterFactory.DEFAULT_PORT;
+        if (options == null)
+            System.exit(1);
 
-            server = TransportAdapterFactory.createServer(implementation, port);
-
-            client =  TransportAdapterFactory.createClient(implementation, port);
-
-            for (int size = 32; size <= 16384; size *= 2)  {
-                Object message = MessageFactory.createMessage(implementation, size);
-
-                long startTime = System.nanoTime();
-                for (int i = 0; i < MESSAGE_NUMBER_TO_SEND; i++) {
-                    client.send(message);
-                }
-                long elapsedTime = System.nanoTime() - startTime;
-                String result = String.format("%s,%s,%s,%s,%s", size, implementation, MESSAGE_NUMBER_TO_SEND, elapsedTime, 1);
-                results.add(result);
-            }
-
-            client.close();
-            server.close();
-            port++;
-            System.out.println("Test of " + implementation +  " ended");
+        if (options.getTesterMode() == TesterMode.CLIENT) {
+            TestExecutor.startConcurrentClients(options);
         }
-
-        for (String result: results)
-            System.out.println(result);
-
+        else if (options.getTesterMode() == TesterMode.SERVER) {
+            TestExecutor.startServer(options);
+        }
     }
 }

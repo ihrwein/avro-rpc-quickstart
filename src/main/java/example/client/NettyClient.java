@@ -8,13 +8,17 @@ import java.net.InetSocketAddress;
 public class NettyClient extends AvroClient{
 
     public NettyClient(int port) {
-        super(port);
+        this(DEFAULT_ADDRESS, port);
+    }
+
+    public NettyClient(String address, int port) {
+        super(address, port);
         NettyTransceiver delegate = null;
         try {
-            delegate = new NettyTransceiver(new InetSocketAddress(port));
+            delegate = new NettyTransceiver(new InetSocketAddress(address, port));
             setDelegate(delegate);
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 }

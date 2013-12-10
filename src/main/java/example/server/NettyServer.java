@@ -1,6 +1,6 @@
 package example.server;
 
-import example.MailImpl;
+import example.message.MailImpl;
 import example.proto.Mail;
 import org.apache.avro.ipc.specific.SpecificResponder;
 

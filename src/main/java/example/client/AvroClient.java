@@ -13,8 +13,8 @@ public class AvroClient extends AbstractClient{
     protected Transceiver delegate;
     private Mail proxy;
 
-    public AvroClient(int port) {
-        super(port);
+    public AvroClient(String address, int port) {
+        super(address, port);
     }
 
     @Override
