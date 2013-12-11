@@ -17,16 +17,19 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             InputStream is = socket.getInputStream();
-            byte[] buffer = new byte[1000];
+            byte[] buffer = new byte[65536];
             int n = 1;
             while (true) {
-                n = is.read(buffer, 0, 1000);
+                n = is.read(buffer, 0, 63536);
                 if (n < 0)
                     break;
             }
+            is.close();
+            this.socket.close();
         }
         catch (IOException e) {
             System.err.println(e.toString());
         }
+
     }
 }

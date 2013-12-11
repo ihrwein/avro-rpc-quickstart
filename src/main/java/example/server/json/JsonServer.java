@@ -9,16 +9,20 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class JsonServer implements Runnable {
 
     private ServerSocket serverSocket;
     private  int port;
+    private ExecutorService pool;
 
     public JsonServer(int port) {
         this.port = port;
         try {
             serverSocket = new ServerSocket(port);
+            pool = Executors.newFixedThreadPool(16);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -44,10 +48,9 @@ public class JsonServer implements Runnable {
                 clientSocket = serverSocket.accept();
                 System.out.println("New client: #" + clientNumber);
                 clientNumber++;
-                ClientHandler ch = new ClientHandler(clientSocket);
-                Thread t = new Thread(ch);
-                t.start();
+                pool.execute(new ClientHandler(clientSocket));
             }
+            pool.shutdown();
         } catch (IOException e) {
             e.printStackTrace();
         }

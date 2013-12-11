@@ -10,7 +10,7 @@ class CommandGenerator:
                  impl,
                  ipaddr="127.0.0.1",
                  port="6000",
-                 msgnum="1000"
+                 msgnum="100000"
                  ):
         self.impl = impl
         self.ipaddr = ipaddr

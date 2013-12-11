@@ -1,5 +1,6 @@
 package example.client;
 
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -8,7 +9,7 @@ import java.net.Socket;
 public class JsonClient extends AbstractClient {
 
     private Socket clientSocket;
-    private DataOutputStream os;
+    private BufferedOutputStream os;
 
     public JsonClient(String address, int port) {
         super(address, port);
@@ -16,7 +17,7 @@ public class JsonClient extends AbstractClient {
         clientSocket = new Socket();
         try {
             clientSocket.connect(new InetSocketAddress(address, port));
-            os = new DataOutputStream(clientSocket.getOutputStream());
+            os = new BufferedOutputStream(clientSocket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -27,8 +28,12 @@ public class JsonClient extends AbstractClient {
     }
 
     public void send(String t) {
+        send(t.getBytes());
+    }
+
+    public void send(byte[] b) {
         try {
-            os.writeBytes(t);
+            os.write(b);
         } catch (IOException e) {
             e.printStackTrace();
         }

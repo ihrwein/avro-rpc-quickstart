@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestExecutor {
 
@@ -35,11 +33,7 @@ public class TestExecutor {
         System.out.println("Starting clients");
 
         CountDownLatch latch = new CountDownLatch(threads);
-        AtomicInteger messageLatch = new AtomicInteger(cmd.getMessageNumber());
-
-        for (int i = 0; i < cmd.getThreads(); i++) {
-            executor.execute(new ConcurrentClient(cmd, message, i, latch, messageLatch));
-        }
+        createAndStartClients(cmd, message, threads, executor, latch);
 
         System.out.println("All clients successfully started");
 
@@ -56,6 +50,20 @@ public class TestExecutor {
 
     }
 
+    private static void createAndStartClients(CommandLineOptions cmd, Object message, int threads, ExecutorService executor, CountDownLatch latch) {
+        int numberPerClient = cmd.getMessageNumber() / threads;
+        int remainder = cmd.getMessageNumber() % threads;
 
+        assert((numberPerClient + remainder) == cmd.getMessageNumber());
 
+        for (int i = 0; i < cmd.getThreads(); i++) {
+            if (i == 0)
+                createAndStartClient(cmd, message, executor, latch, numberPerClient + remainder, i);
+            createAndStartClient(cmd, message, executor, latch, numberPerClient, i);
+        }
+    }
+
+    private static void createAndStartClient(CommandLineOptions cmd, Object message, ExecutorService executor, CountDownLatch latch, int numberPerClient, int i) {
+        executor.execute(new ConcurrentClient(cmd, message, i, latch, numberPerClient));
+    }
 }

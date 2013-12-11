@@ -14,14 +14,14 @@ public class ConcurrentClient implements Runnable {
     private Object message;
     private int id;
     private CountDownLatch latch;
-    private AtomicInteger messageLatch;
+    private int numberOfMessagesToBeSent;
 
-    public ConcurrentClient(CommandLineOptions options, Object message, int id, CountDownLatch latch, AtomicInteger messageLatch) {
+    public ConcurrentClient(CommandLineOptions options, Object message, int id, CountDownLatch latch, int numberOfMessagesToBeSent) {
         this.options = options;
         this.message = message;
         this.id = id;
         this.latch = latch;
-        this.messageLatch = messageLatch;
+        this.numberOfMessagesToBeSent = numberOfMessagesToBeSent;
     }
 
     @Override
@@ -44,23 +44,9 @@ public class ConcurrentClient implements Runnable {
     }
 
     private void startSendingMessages(AbstractClient client) {
-
-        int messageNumber = options.getMessageNumber();
-        int messagesPerIteration = messageNumber / 100;
-        int percent  = 0;
-        int sentMessages = 0;
-
-        while(messageLatch.getAndDecrement() > 0) {
-
-            sentMessages++;
+        while(numberOfMessagesToBeSent > 0) {
             client.send(message);
-
-//            if (sentMessages % messagesPerIteration == 0)
-//            {
-//                System.out.println("Client #" + id + " is at "  + "%");
-//                percent++;
-//            }
-
+            numberOfMessagesToBeSent--;
         }
     }
 
