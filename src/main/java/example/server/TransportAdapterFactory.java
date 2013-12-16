@@ -1,5 +1,6 @@
 package example.server;
 
+import example.cli.ICLIOptions;
 import example.client.AbstractClient;
 import example.client.HttpClient;
 import example.client.JsonClient;
@@ -14,6 +15,10 @@ import example.util.Defaults;
 import java.io.IOException;
 
 public class TransportAdapterFactory {
+
+    public static IServer createServer(ICLIOptions options) throws IOException {
+        return createServer(options.getImplementation(), options.getPort());
+    }
 
     public static IServer createServer(String implementation, int port) throws IOException {
         if ("netty".equals(implementation)) {
@@ -37,7 +42,7 @@ public class TransportAdapterFactory {
         return createClient(implementation, Defaults.ADDRESS, Defaults.PORT);
     }
 
-    public static AbstractClient createClient(String implementation, String address, int port) throws IOException {
+    public static AbstractClient createClient(String implementation, String address, int port, boolean buffering) {
         if ("netty".equals(implementation)) {
             return new NettyClient(address, port);
         }
@@ -49,5 +54,9 @@ public class TransportAdapterFactory {
         }
 
         return null;
+    }
+
+    public static AbstractClient createClient(String implementation, String address, int port) throws IOException {
+        return createClient(implementation, address, port, true);
     }
 }

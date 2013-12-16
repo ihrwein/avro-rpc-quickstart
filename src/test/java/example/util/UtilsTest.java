@@ -1,32 +1,10 @@
 package example.util;
 
+import example.cli.CLIOptionParser;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class UtilsTest {
-
-    @Test
-    public void testParseCommandLineOptions() {
-        String address = "1.2.4.4";
-        Integer msgnum = 1300;
-        Integer threads = 12;
-        String impl = "netty";
-        Integer port = 623;
-        Integer msgsize = 2045;
-
-        String options[] = {"-client", address, "-msgnum", msgnum.toString(), "-threads", threads.toString(),
-                            "-impl", "netty", "-port", port.toString(), "-msgsize", msgsize.toString()};
-
-        CommandLineOptions co = Utils.parseCommandLineOptions(options);
-
-        Assert.assertEquals(TesterMode.CLIENT, co.getTesterMode());
-        Assert.assertEquals(address, co.getAddress());
-        Assert.assertEquals(msgnum.intValue(), co.getMessageNumber());
-        Assert.assertEquals(threads.intValue(), co.getThreads());
-        Assert.assertEquals(impl, co.getImplementation());
-        Assert.assertEquals(port.intValue(), co.getPort());
-        Assert.assertEquals(msgsize.intValue(), co.getMessageSize());
-    }
 
     @Test
     public void testRoundUpTo100() {
@@ -36,6 +14,20 @@ public class UtilsTest {
 
         Assert.assertEquals(1000, Utils.roundUpTo100(1000));
 
+    }
+
+    @Test
+    public void testToInt() {
+        int a = Utils.toInt(new byte[] {0, 1, 2, 3});
+        Assert.assertEquals(66051, a);
+        a = Utils.toInt(new byte[] {1,1,1,1});
+        Assert.assertEquals(16843009, a);
+    }
+
+    @Test
+    public void testIntConversion()
+    {
+        Assert.assertEquals(5, Utils.toInt(Utils.toBytes(5)));
     }
 
 }

@@ -1,9 +1,11 @@
 package example.tester;
 
-import example.util.CommandLineOptions;
+import example.cli.CLIOptions;
+import example.cli.ICLIOptions;
 import example.message.MessageFactory;
 import example.server.IServer;
 import example.server.TransportAdapterFactory;
+import example.util.TesterMode;
 import example.util.Utils;
 
 import java.io.IOException;
@@ -13,27 +15,46 @@ import java.util.concurrent.Executors;
 
 public class TestExecutor {
 
-    public static void startServer(CommandLineOptions cmd) throws IOException, InterruptedException {
-        IServer server;
-        server = TransportAdapterFactory.createServer(cmd.getImplementation(), cmd.getPort());
-        Utils.block();
+    public static int startTest(ICLIOptions options) throws IOException, InterruptedException {
+        TesterMode testerMode = options.getTesterMode();
 
-        server.close();
+        if (testerMode == TesterMode.CLIENT) {
+            startConcurrentClients(options);
+        }
+        else if (testerMode == TesterMode.SERVER) {
+            startServer(options);
+        }
+
+        return 0;
     }
 
-    public static void startConcurrentClients(CommandLineOptions cmd) throws IOException, InterruptedException {
+    public static void startServer(ICLIOptions options) throws InterruptedException {
+        IServer server = null;
 
-        Object message = MessageFactory.createMessage(cmd.getImplementation(), cmd.getMessageSize());
-        int threads = cmd.getThreads();
+        try {
+            server = TransportAdapterFactory.createServer(options);
+            Utils.block();
+        }
+        catch (IOException e) {
+            if (server != null) {
+                server.close();
+            }
+        }
+
+    }
+
+    public static void startConcurrentClients(ICLIOptions options) throws IOException, InterruptedException {
+
+        Object message = MessageFactory.createMessage(options);
+        int threads = options.getThreads();
 
         ExecutorService executor = Executors.newFixedThreadPool(threads);
-
 
         long startTime = System.nanoTime();
         System.out.println("Starting clients");
 
         CountDownLatch latch = new CountDownLatch(threads);
-        createAndStartClients(cmd, message, threads, executor, latch);
+        createAndStartClients(options, message, threads, executor, latch);
 
         System.out.println("All clients successfully started");
 
@@ -45,25 +66,31 @@ public class TestExecutor {
         long elapsedTime = System.nanoTime() - startTime;
 
         System.out.println("msgsize, impl, msgnum, elapsegtime, threads");
-        String result = String.format("%s,%s,%s,%s,%s", cmd.getMessageSize(), cmd.getImplementation(), cmd.getMessageNumber(), elapsedTime, threads);
+        String result = String.format("%s,%s,%s,%s,%s",
+                                      options.getMessageSize(),
+                                      options.getImplementation(),
+                                      options.getMessageNumber(),
+                                      elapsedTime,
+                                      threads);
         System.err.println(result);
 
     }
 
-    private static void createAndStartClients(CommandLineOptions cmd, Object message, int threads, ExecutorService executor, CountDownLatch latch) {
-        int numberPerClient = cmd.getMessageNumber() / threads;
-        int remainder = cmd.getMessageNumber() % threads;
+    private static void createAndStartClients(ICLIOptions options, Object message, int threads, ExecutorService executor, CountDownLatch latch) {
+        int messageNumber = options.getMessageNumber();
+        int numberPerClient = messageNumber / threads;
+        int remainder = messageNumber % threads;
 
-        assert((numberPerClient + remainder) == cmd.getMessageNumber());
+        assert((numberPerClient + remainder) == messageNumber);
 
-        for (int i = 0; i < cmd.getThreads(); i++) {
+        for (int i = 0; i < options.getThreads(); i++) {
             if (i == 0)
-                createAndStartClient(cmd, message, executor, latch, numberPerClient + remainder, i);
-            createAndStartClient(cmd, message, executor, latch, numberPerClient, i);
+                createAndStartClient(options, message, executor, latch, numberPerClient + remainder, i);
+            createAndStartClient(options, message, executor, latch, numberPerClient, i);
         }
     }
 
-    private static void createAndStartClient(CommandLineOptions cmd, Object message, ExecutorService executor, CountDownLatch latch, int numberPerClient, int i) {
-        executor.execute(new ConcurrentClient(cmd, message, i, latch, numberPerClient));
+    private static void createAndStartClient(ICLIOptions options, Object message, ExecutorService executor, CountDownLatch latch, int numberPerClient, int i) {
+        executor.execute(new ConcurrentClient(options, message, i, latch, numberPerClient));
     }
 }

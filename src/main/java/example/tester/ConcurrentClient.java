@@ -1,22 +1,24 @@
 package example.tester;
 
-import example.util.CommandLineOptions;
+import example.cli.CLIOptionNameBinding;
+import example.cli.CLIOptionParser;
+import example.cli.CLIOptions;
+import example.cli.ICLIOptions;
 import example.server.TransportAdapterFactory;
 import example.client.AbstractClient;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConcurrentClient implements Runnable {
 
-    private CommandLineOptions options;
+    private ICLIOptions options;
     private Object message;
     private int id;
     private CountDownLatch latch;
     private int numberOfMessagesToBeSent;
 
-    public ConcurrentClient(CommandLineOptions options, Object message, int id, CountDownLatch latch, int numberOfMessagesToBeSent) {
+    public ConcurrentClient(ICLIOptions options, Object message, int id, CountDownLatch latch, int numberOfMessagesToBeSent) {
         this.options = options;
         this.message = message;
         this.id = id;
@@ -28,7 +30,9 @@ public class ConcurrentClient implements Runnable {
     public void run() {
         try {
             AbstractClient client;
-            client =  TransportAdapterFactory.createClient(options.getImplementation(), options.getAddress(), options.getPort());
+            client =  TransportAdapterFactory.createClient(options.getImplementation(),
+                                                           options.getAddress(),
+                                                           options.getPort());
 
             System.out.println("Client #" + id + " started to send messages");
             startSendingMessages(client);

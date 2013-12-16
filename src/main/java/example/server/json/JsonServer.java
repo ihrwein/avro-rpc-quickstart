@@ -17,12 +17,14 @@ public class JsonServer implements Runnable {
     private ServerSocket serverSocket;
     private  int port;
     private ExecutorService pool;
+    private volatile boolean isClosed;
 
     public JsonServer(int port) {
         this.port = port;
         try {
             serverSocket = new ServerSocket(port);
             pool = Executors.newFixedThreadPool(16);
+            isClosed = false;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,10 +35,15 @@ public class JsonServer implements Runnable {
     }
 
     public void close() {
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!isClosed)  {
+            isClosed = true;
+        // to close the socket, we should take it out from accept()
+            try {
+                new Socket("127.0.0.1", port).close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -44,13 +51,14 @@ public class JsonServer implements Runnable {
         Socket clientSocket = null;
         try {
             int clientNumber = 0;
-            while (true && !serverSocket.isClosed()) {
+            while (!isClosed && !serverSocket.isClosed()) {
                 clientSocket = serverSocket.accept();
                 System.out.println("New client: #" + clientNumber);
                 clientNumber++;
                 pool.execute(new ClientHandler(clientSocket));
             }
             pool.shutdown();
+            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

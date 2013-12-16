@@ -17,6 +17,7 @@ public class NettyClient extends AvroClient{
         try {
             delegate = new NettyTransceiver(new InetSocketAddress(address, port));
             setDelegate(delegate);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
