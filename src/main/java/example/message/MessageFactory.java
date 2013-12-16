@@ -1,9 +1,14 @@
 package example.message;
 
+import example.cli.ICLIOptions;
 import example.proto.Message;
 import org.apache.avro.util.Utf8;
 
 public class MessageFactory {
+
+    public static Object createMessage(ICLIOptions options) {
+        return createMessage(options.getImplementation(), options.getMessageSize());
+    }
 
     public static Object createMessage(String implementation, int size) {
         if ("netty".equals(implementation) || "http".equals(implementation)) {

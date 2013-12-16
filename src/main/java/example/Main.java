@@ -18,10 +18,11 @@
 
 package example;
 
-import example.util.CommandLineOptions;
-import example.util.TesterMode;
-import example.util.Utils;
+import example.cli.CLIOptions;
+import example.cli.CLIUtils;
+import example.cli.ICLIOptions;
 import example.tester.TestExecutor;
+
 import java.io.IOException;
 
 public class Main {
@@ -30,16 +31,11 @@ public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        CommandLineOptions options = Utils.parseCommandLineOptions(args);
+        ICLIOptions options = CLIUtils.parseCommandLineOptions(args);
 
         if (options == null)
             System.exit(1);
 
-        if (options.getTesterMode() == TesterMode.CLIENT) {
-            TestExecutor.startConcurrentClients(options);
-        }
-        else if (options.getTesterMode() == TesterMode.SERVER) {
-            TestExecutor.startServer(options);
-        }
+        TestExecutor.startTest(options);
     }
 }

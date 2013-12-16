@@ -14,7 +14,7 @@
  "messages": {
      "send": {
          "request": [{"name": "message", "type": "Message"}],
-         "response": "string"
+         "response": "null"
      }
  }
 }
