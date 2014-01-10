@@ -1,11 +1,8 @@
 package example.tester;
 
-import example.cli.CLIOptionNameBinding;
-import example.cli.CLIOptionParser;
-import example.cli.CLIOptions;
 import example.cli.ICLIOptions;
-import example.server.TransportAdapterFactory;
 import example.client.AbstractClient;
+import example.server.TransportAdapterFactory;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -30,17 +27,12 @@ public class ConcurrentClient implements Runnable {
     public void run() {
         try {
             AbstractClient client;
-            client =  TransportAdapterFactory.createClient(options.getImplementation(),
-                                                           options.getAddress(),
-                                                           options.getPort());
+            client =  TransportAdapterFactory.createClient(options);
 
             System.out.println("Client #" + id + " started to send messages");
             startSendingMessages(client);
             System.out.println("Client #" + id + " ended sending messages");
             client.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
         }
         finally {
             latch.countDown();

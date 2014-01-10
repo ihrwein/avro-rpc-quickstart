@@ -38,8 +38,8 @@ public class TransportAdapterFactory {
         return null;
     }
 
-    public static AbstractClient createClient(String implementation) throws IOException {
-        return createClient(implementation, Defaults.ADDRESS, Defaults.PORT);
+    public static AbstractClient createClient(ICLIOptions options) {
+        return createClient(options.getImplementation(), options.getAddress(), options.getPort(), options.isJsonClientBuffering());
     }
 
     public static AbstractClient createClient(String implementation, String address, int port, boolean buffering) {
@@ -50,13 +50,9 @@ public class TransportAdapterFactory {
             return new HttpClient(address, port);
         }
         else if ("json".equals(implementation)) {
-            return new JsonClient(address, port);
+            return new JsonClient(address, port, buffering);
         }
 
         return null;
-    }
-
-    public static AbstractClient createClient(String implementation, String address, int port) throws IOException {
-        return createClient(implementation, address, port, true);
     }
 }

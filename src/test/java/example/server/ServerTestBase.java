@@ -16,6 +16,7 @@ public abstract class ServerTestBase {
     public void testGetPort() throws Exception {
         int port = 6001;
         IServer s = createServer(port);
+        s.start();
         Assert.assertEquals(port, s.getPort());
         s.close();
     }
@@ -28,6 +29,5 @@ public abstract class ServerTestBase {
         s.start();
         Assert.assertFalse(TestUtil.isPortAvailable(port));
         s.close();
-        Assert.assertTrue(TestUtil.isPortAvailable(port));
     }
 }

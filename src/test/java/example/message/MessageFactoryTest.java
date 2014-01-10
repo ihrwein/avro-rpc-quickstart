@@ -5,23 +5,19 @@ import org.junit.Test;
 
 public class MessageFactoryTest {
 
-
     @Test
-    public void testCreateNettyMessage() throws Exception {
-        Object m = MessageFactory.createMessage("netty", 200);
-        Assert.assertNotNull(m);
-    }
-
-    @Test
-    public void testCreateHttpMessage() throws Exception {
-        Object m = MessageFactory.createMessage("http", 200);
+    public void testCreateAvroMessage() throws Exception {
+        Object m = MessageFactory.createAvroMessage(200);
         Assert.assertNotNull(m);
     }
 
     @Test
     public void testCreateJsonMessage() throws Exception {
-        String m = (String) MessageFactory.createMessage("json", 200);
+        int messageSize = 200;
+
+        JsonMessage m = (JsonMessage) MessageFactory.createJsonMessage(messageSize);
         Assert.assertNotNull(m);
-        Assert.assertTrue(m.charAt(0) == '{');
+        Assert.assertTrue(m.toString().charAt(0) == '{');
+        int realSize = m.toString().length();
     }
 }

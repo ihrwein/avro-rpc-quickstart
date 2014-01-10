@@ -36,11 +36,12 @@ public class TestExecutor {
             Utils.block();
         }
         catch (IOException e) {
+        }
+        finally {
             if (server != null) {
                 server.close();
             }
         }
-
     }
 
     public static void startConcurrentClients(ICLIOptions options) throws IOException, InterruptedException {

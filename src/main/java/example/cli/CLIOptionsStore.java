@@ -6,7 +6,7 @@ public class CLIOptionsStore {
     private HashMap<String, Object> options;
 
     public CLIOptionsStore() {
-        options = new HashMap<>();
+        options = new HashMap<String, Object>();
     }
 
     public void addOption(String name, Object value) {
@@ -29,11 +29,11 @@ public class CLIOptionsStore {
     }
 
     public int getIntValue(String name) {
-        return (int) getValue(name);
+        return (Integer) getValue(name);
     }
 
     public int getIntValue(String name, Integer defaultValue) {
-        return (int) getValue(name, defaultValue);
+        return (Integer) getValue(name, defaultValue);
     }
 
     public String getStringValue(String name) {

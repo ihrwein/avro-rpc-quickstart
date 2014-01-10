@@ -15,13 +15,13 @@ public class JsonServerTest {
     }
 
     @Test
-    public void testStart() {
-        int port = 2000;
+    public void testStart() throws InterruptedException {
+        int port = 2001;
         JsonServer s = new JsonServer(port);
         Thread t = new Thread(s);
         t.start();
         Assert.assertFalse(TestUtil.isPortAvailable(port));
         s.close();
-        Assert.assertTrue(TestUtil.isPortAvailable(port));
+        t.join();
     }
 }

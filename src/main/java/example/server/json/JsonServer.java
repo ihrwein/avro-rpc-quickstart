@@ -35,13 +35,21 @@ public class JsonServer implements Runnable {
     }
 
     public void close() {
+        Socket s = null;
         if (!isClosed)  {
             isClosed = true;
         // to close the socket, we should take it out from accept()
             try {
-                new Socket("127.0.0.1", port).close();
+                s = new Socket("127.0.0.1", port);
             } catch (IOException e) {
-                e.printStackTrace();
+            }
+            finally {
+                assert s != null;
+                try {
+                    s.close();
+                } catch (IOException e) {
+
+                }
             }
 
         }
@@ -51,7 +59,7 @@ public class JsonServer implements Runnable {
         Socket clientSocket = null;
         try {
             int clientNumber = 0;
-            while (!isClosed && !serverSocket.isClosed()) {
+            while (!isClosed && serverSocket != null && !serverSocket.isClosed()) {
                 clientSocket = serverSocket.accept();
                 System.out.println("New client: #" + clientNumber);
                 clientNumber++;

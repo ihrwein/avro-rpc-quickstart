@@ -6,6 +6,10 @@ import org.apache.avro.util.Utf8;
 
 public class MessageFactory {
 
+    private static final int DEFAULT_CONTENT_SIZE = 8;
+    private static final String RECIPIENT = "Bob";
+    private static final String SENDER = "Alice";
+
     public static Object createMessage(ICLIOptions options) {
         return createMessage(options.getImplementation(), options.getMessageSize());
     }
@@ -20,36 +24,29 @@ public class MessageFactory {
         return null;
     }
 
-    private static Message createAvroMessage(int size) {
-        int minSize = 8;
+    public static Message createAvroMessage(int size) {
         Message message = new Message();
-        message.setTo(new Utf8("Bob"));
-        message.setFrom(new Utf8("Alice"));
+        message.setTo(new Utf8(SENDER));
+        message.setFrom(new Utf8(RECIPIENT));
 
-        String padding = createPadding(size, minSize);
-
+        String padding = createPadding(size - DEFAULT_CONTENT_SIZE);
         message.setBody(new Utf8(padding));
 
         return message;
     }
 
-    private static String createPadding(int size, int minSize) {
+    private static String createPadding(int size) {
         StringBuilder builder = new StringBuilder(size);
 
-        if (size > minSize) {
-            for(int i = 0; i < size - minSize; i++){
-                builder.append("0");
-            }
+        for(int i = 0; i < size; i++){
+            builder.append("0");
         }
 
         return builder.toString();
     }
 
-    private static String createJsonMessage(int size) {
-        int minSize = 8;
-        String padding = createPadding(size, minSize);
-        JsonMessage m = new JsonMessage("Bob", "Alice", padding);
-        return m.toString();
+    public static Object createJsonMessage(int size) {
+        String padding = createPadding(size - DEFAULT_CONTENT_SIZE);
+        return new JsonMessage(SENDER, RECIPIENT, padding);
     }
-
 }
