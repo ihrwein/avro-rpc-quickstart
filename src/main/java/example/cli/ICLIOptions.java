@@ -19,4 +19,6 @@ public interface ICLIOptions {
     public TesterMode getTesterMode();
 
     public Boolean isJsonClientBuffering();
+
+    public Integer getNettyClientBufferSize();
 }

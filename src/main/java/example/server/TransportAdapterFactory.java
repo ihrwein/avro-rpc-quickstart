@@ -39,12 +39,12 @@ public class TransportAdapterFactory {
     }
 
     public static AbstractClient createClient(ICLIOptions options) {
-        return createClient(options.getImplementation(), options.getAddress(), options.getPort(), options.isJsonClientBuffering());
+        return createClient(options.getImplementation(), options.getAddress(), options.getPort(), options.isJsonClientBuffering(), options);
     }
 
-    public static AbstractClient createClient(String implementation, String address, int port, boolean buffering) {
+    public static AbstractClient createClient(String implementation, String address, int port, boolean buffering, ICLIOptions options) {
         if ("netty".equals(implementation)) {
-            return new NettyClient(address, port);
+            return new NettyClient(options);
         }
         else if ("http".equals(implementation)) {
             return new HttpClient(address, port);

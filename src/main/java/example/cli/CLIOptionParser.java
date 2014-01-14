@@ -19,8 +19,21 @@ public class CLIOptionParser {
         tryParseMessageNumber(options, cliOptions);
         parseImplementation(options, cliOptions);
         parseJsonBuffering(options, cliOptions);
+        parseNettyBufferSize(options, cliOptions);
 
         return  cliOptions;
+    }
+
+    private static void parseNettyBufferSize(CommandLine options, CLIOptions cliOptions) {
+        String implementation = (String) cliOptions.getImplementation();
+        Boolean isEnabled = options.hasOption(CLIOptionNameBinding.NETTY_CLIENT_BUFFER_SIZE);
+
+        if ("netty".equals(implementation) && isEnabled) {
+            tryParseIntegerOption(CLIOptionNameBinding.NETTY_CLIENT_BUFFER_SIZE, options, cliOptions, -1);
+        }
+        else if (isEnabled) {
+            throw new RuntimeException("Invalid implementation");
+        }
     }
 
     private static void parseJsonBuffering(CommandLine options, CLIOptions cliOptions) {

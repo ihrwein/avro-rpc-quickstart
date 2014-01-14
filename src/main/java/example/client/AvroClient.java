@@ -7,6 +7,7 @@ import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 
 import java.io.IOException;
+import java.util.List;
 
 public class AvroClient extends AbstractClient{
 
@@ -34,6 +35,14 @@ public class AvroClient extends AbstractClient{
     public void send(Message m) {
         try {
             proxy.send(m);
+        } catch (AvroRemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMore(List<Message> messages) {
+        try {
+            proxy.sendMore(messages);
         } catch (AvroRemoteException e) {
             e.printStackTrace();
         }

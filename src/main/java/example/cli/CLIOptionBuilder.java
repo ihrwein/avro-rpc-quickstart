@@ -23,6 +23,7 @@ public class CLIOptionBuilder {
         options.addOption(OptionBuilder.withArgName("size").hasArg().withDescription("the size of messages in bytes").withType(Integer.class).create(CLIOptionNameBinding.MESSAGE_SIZE));
         options.addOption(OptionBuilder.withArgName("number").hasArg().withDescription("the number of messages").withType(Integer.class).create(CLIOptionNameBinding.MESSAGE_NUMBER));
         options.addOption(new Option("jb", CLIOptionNameBinding.IS_JSON_CLIENT_BUFFERING, false, "json buffering"));
+        options.addOption(OptionBuilder.withArgName("buffer size").hasArg().withDescription("the number of messages to buffer").withType(Integer.class).create(CLIOptionNameBinding.NETTY_CLIENT_BUFFER_SIZE));
         return options;
     }
 }

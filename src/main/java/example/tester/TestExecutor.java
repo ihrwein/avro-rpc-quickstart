@@ -66,7 +66,11 @@ public class TestExecutor {
 
         long elapsedTime = System.nanoTime() - startTime;
 
-        System.out.println("msgsize, impl, msgnum, elapsegtime, threads");
+        double msgPerSec = options.getMessageNumber() / (elapsedTime / 1000000000.);
+        System.out.println("Msg/sec: " + msgPerSec);
+        double networkSpeed = 8 * msgPerSec * options.getMessageSize() / (1024 * 1024);
+        System.out.println("Network speed (Mb/s): " + networkSpeed);
+        System.out.println("msgsize, impl, msgnum, elapsedtime, threads");
         String result = String.format("%s,%s,%s,%s,%s",
                                       options.getMessageSize(),
                                       options.getImplementation(),
@@ -84,9 +88,8 @@ public class TestExecutor {
 
         assert((numberPerClient + remainder) == messageNumber);
 
-        for (int i = 0; i < options.getThreads(); i++) {
-            if (i == 0)
-                createAndStartClient(options, message, executor, latch, numberPerClient + remainder, i);
+        createAndStartClient(options, message, executor, latch, numberPerClient + remainder, 0);
+        for (int i = 1; i < options.getThreads(); i++) {
             createAndStartClient(options, message, executor, latch, numberPerClient, i);
         }
     }

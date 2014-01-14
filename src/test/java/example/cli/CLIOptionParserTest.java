@@ -133,4 +133,14 @@ public class CLIOptionParserTest {
         CLIOptions o = CLIUtils.parseCommandLineOptions(args);
         Assert.assertEquals(true, o.isJsonClientBuffering());
     }
+
+    @Test
+    public void testNettyBufferSize() {
+        String size = "1000";
+        String args[] = {"-client", "127.0.0.1", "-impl", "netty",
+                CLIOptionNameBinding.toCLIOption(CLIOptionNameBinding.NETTY_CLIENT_BUFFER_SIZE), size};
+
+        CLIOptions o = CLIUtils.parseCommandLineOptions(args);
+        Assert.assertEquals(new Integer(size), o.getNettyClientBufferSize());
+    }
 }

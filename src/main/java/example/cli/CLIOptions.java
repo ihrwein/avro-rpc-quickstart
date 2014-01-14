@@ -53,4 +53,9 @@ public class CLIOptions implements ICLIOptions{
     public Boolean isJsonClientBuffering() {
         return delegate.getBooleanValue(CLIOptionNameBinding.IS_JSON_CLIENT_BUFFERING);
     }
+
+    @Override
+    public Integer getNettyClientBufferSize() {
+        return delegate.getIntValue(CLIOptionNameBinding.NETTY_CLIENT_BUFFER_SIZE);
+    }
 }

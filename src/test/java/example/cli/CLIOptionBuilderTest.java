@@ -41,6 +41,33 @@ public class CLIOptionBuilderTest {
         Assert.assertTrue(o.isJsonClientBuffering());
     }
 
+    @Test
+    public void testNettyBuffering() throws ParseException {
+        String address = "1.2.3.4";
+        String impl = "netty";
+        String bufferSize= "100";
+
+        String[] args = {toCLIOption(CLIENT), address, toCLIOption(IMPLEMENTATION), impl, toCLIOption(NETTY_CLIENT_BUFFER_SIZE), bufferSize};
+
+        CLIOptions o = checkBuildOptions(args);
+
+        Assert.assertEquals(address, o.getAddress());
+        Assert.assertEquals(impl, o.getImplementation());
+        Assert.assertEquals(new Integer(bufferSize), o.getNettyClientBufferSize());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testNettyBufferingWithNotNettyImplementation() throws ParseException {
+        String address = "1.2.3.4";
+        String impl = "json";
+        String bufferSize= "100";
+
+        String[] args = {toCLIOption(CLIENT), address, toCLIOption(IMPLEMENTATION), impl, toCLIOption(NETTY_CLIENT_BUFFER_SIZE), bufferSize};
+
+        CLIOptions o = checkBuildOptions(args);
+        Integer n = o.getNettyClientBufferSize();
+    }
+
     private CLIOptions checkBuildOptions(String[] args) throws ParseException {
         Options options = CLIOptionBuilder.buildOptions();
 

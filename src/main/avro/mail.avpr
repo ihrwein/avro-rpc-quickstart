@@ -1,13 +1,16 @@
-{"namespace": "example.proto",
+{
+ "namespace": "example.proto",
  "protocol": "Mail",
 
  "types": [
-     {"name": "Message", "type": "record",
-      "fields": [
+     {
+     "name": "Message",
+     "type": "record",
+     "fields": [
           {"name": "to",   "type": "string"},
           {"name": "from", "type": "string"},
           {"name": "body", "type": "string"}
-      ]
+     ]
      }
  ],
 
@@ -15,6 +18,10 @@
      "send": {
          "request": [{"name": "message", "type": "Message"}],
          "response": "null"
+     },
+     "sendMore" : {
+         "request": [ {"name" : "messages", "type" : {"type" : "array", "items":"Message"}}],
+         "response" : "null"
      }
  }
 }

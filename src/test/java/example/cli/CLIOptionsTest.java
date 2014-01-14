@@ -87,4 +87,12 @@ public class CLIOptionsTest {
         Assert.assertEquals(Boolean.FALSE, c.isJsonClientBuffering());
 
     }
+
+    @Test
+    public void testIsNettyClientBuffering() {
+        CLIOptions c = new CLIOptions();
+
+        c.addOption(CLIOptionNameBinding.NETTY_CLIENT_BUFFER_SIZE, new Integer(100));
+        Assert.assertEquals(new Integer(100), c.getNettyClientBufferSize());
+    }
 }
