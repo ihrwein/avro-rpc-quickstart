@@ -70,14 +70,33 @@ public class TestExecutor {
         System.out.println("Msg/sec: " + msgPerSec);
         double networkSpeed = 8 * msgPerSec * options.getMessageSize() / (1024 * 1024);
         System.out.println("Network speed (Mb/s): " + networkSpeed);
-        System.out.println("msgsize, impl, msgnum, elapsedtime, threads");
-        String result = String.format("%s,%s,%s,%s,%s",
-                                      options.getMessageSize(),
-                                      options.getImplementation(),
-                                      options.getMessageNumber(),
-                                      elapsedTime,
-                                      threads);
-        System.err.println(result);
+
+        if (options.getNettyClientBufferSize() < 0) {
+            System.out.println("msgsize, impl, msgnum, elapsedtime, threads, msgpersec, networkspeed(Mbps)");
+            String result = String.format("%s,%s,%s,%s,%s,%s,%s",
+                    options.getMessageSize(),
+                    options.getImplementation(),
+                    options.getMessageNumber(),
+                    elapsedTime,
+                    threads,
+                    msgPerSec,
+                    networkSpeed);
+            System.err.println(result);
+        }
+        else {
+            System.out.println("msgsize, impl, msgnum, elapsedtime, threads, msgpersec, networkspeed(Mbps), netty_buffer_size");
+            String result = String.format("%s,%s,%s,%s,%s,%s,%s,%s",
+                    options.getMessageSize(),
+                    options.getImplementation(),
+                    options.getMessageNumber(),
+                    elapsedTime,
+                    threads,
+                    msgPerSec,
+                    networkSpeed,
+                    options.getNettyClientBufferSize());
+            System.err.println(result);
+        }
+
 
     }
 
