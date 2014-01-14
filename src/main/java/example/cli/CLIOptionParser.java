@@ -28,8 +28,8 @@ public class CLIOptionParser {
         String implementation = (String) cliOptions.getImplementation();
         Boolean isEnabled = options.hasOption(CLIOptionNameBinding.NETTY_CLIENT_BUFFER_SIZE);
 
-        if ("netty".equals(implementation) && isEnabled) {
-            tryParseIntegerOption(CLIOptionNameBinding.NETTY_CLIENT_BUFFER_SIZE, options, cliOptions, -1);
+        if ("netty".equals(implementation)) {
+            tryParseIntegerOption(CLIOptionNameBinding.NETTY_CLIENT_BUFFER_SIZE, options, cliOptions, Defaults.NETTY_BUFFER_SIZE);
         }
         else if (isEnabled) {
             throw new RuntimeException("Invalid implementation");

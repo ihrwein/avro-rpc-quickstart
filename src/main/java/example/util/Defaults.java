@@ -7,4 +7,5 @@ public class Defaults {
     public static final String  ADDRESS = "127.0.0.1";
     public static final int  PORT = 65111;
     public static final String IMPLEMENTATION = "netty";
+    public static final Integer NETTY_BUFFER_SIZE = 0;
 }

@@ -143,4 +143,6 @@ public class CLIOptionParserTest {
         CLIOptions o = CLIUtils.parseCommandLineOptions(args);
         Assert.assertEquals(new Integer(size), o.getNettyClientBufferSize());
     }
+
+
 }

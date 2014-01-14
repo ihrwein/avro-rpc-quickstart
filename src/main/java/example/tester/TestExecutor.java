@@ -5,6 +5,7 @@ import example.cli.ICLIOptions;
 import example.message.MessageFactory;
 import example.server.IServer;
 import example.server.TransportAdapterFactory;
+import example.util.Defaults;
 import example.util.TesterMode;
 import example.util.Utils;
 
@@ -71,7 +72,7 @@ public class TestExecutor {
         double networkSpeed = 8 * msgPerSec * options.getMessageSize() / (1024 * 1024);
         System.out.println("Network speed (Mb/s): " + networkSpeed);
 
-        if (options.getNettyClientBufferSize() < 0) {
+        if (options.getNettyClientBufferSize() != Defaults.NETTY_BUFFER_SIZE) {
             System.out.println("msgsize, impl, msgnum, elapsedtime, threads, msgpersec, networkspeed(Mbps)");
             String result = String.format("%s,%s,%s,%s,%s,%s,%s",
                     options.getMessageSize(),

@@ -2,6 +2,7 @@ package example.client;
 
 import example.cli.ICLIOptions;
 import example.proto.Message;
+import example.util.Defaults;
 import org.apache.avro.ipc.NettyTransceiver;
 
 import java.io.IOException;
@@ -60,7 +61,8 @@ public class NettyClient extends AvroClient{
 
     @Override
     public void close() {
-        sendBufferedMessages();
+        if (bufferSize != Defaults.NETTY_BUFFER_SIZE)
+            sendBufferedMessages();
         super.close();
     }
 }
